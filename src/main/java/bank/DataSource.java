@@ -34,7 +34,7 @@ public class DataSource {
             resultSet.getInt("id"),
             resultSet.getString("name"),
             resultSet.getString("username"),
-            resultSet.getInt("password"),
+            resultSet.getString("password"),
             resultSet.getInt("account_id"));
       }
 
@@ -66,11 +66,33 @@ public class DataSource {
     return account;
   }
 
-  public static void main(String[] args) {
-    Customer customer = getCustomer("twest8o@friendfeed.com");
-    Account account = getAccount(11748);
+  public static void updateAccountBalance(int accountId, double balance) {
+    String sql = "update accounts set balance = ? where id = ?";
 
-    System.out.println(customer.getName());
-    System.out.println(account.getBalance());
+    try (
+        Connection connection = connect();
+        PreparedStatement statement = connection.prepareStatement(sql);) {
+
+      statement.setDouble(1, balance);
+      statement.setInt(2, accountId);
+
+      // for insert, update or delete statements we use
+      // execute update method as opposed to the execute query method.
+
+      statement.executeUpdate();
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
+
+  // We don't need this main method anymore, it was just for testing.
+
+  // public static void main(String[] args) {
+  // Customer customer = getCustomer("twest8o@friendfeed.com");
+  // Account account = getAccount(customer.getAccountId());
+
+  // System.out.println(customer);
+  // System.out.println(account.getBalance());
+  // }
 }
